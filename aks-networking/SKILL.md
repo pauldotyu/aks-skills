@@ -373,41 +373,9 @@ kubectl get pods -n <namespace> --show-labels
 kubectl get service <service-name> -n <namespace> -o jsonpath='{.spec.ports[*]}'
 ```
 
-### Step 3: Test in-cluster connectivity
+### Step 3: Check network policies (including CiliumNetworkPolicy)
 
-Use a debug pod to test connectivity from within the cluster:
-
-```bash
-kubectl run netshoot --image=nicolaka/netshoot --rm -it -- bash
-```
-
-From inside the debug pod:
-
-```bash
-# Test service DNS resolution
-nslookup <service-name>.<namespace>.svc.cluster.local
-
-# Test connectivity to the service ClusterIP
-curl -v http://<service-name>.<namespace>.svc.cluster.local:<port>
-
-# Test direct pod-to-pod connectivity
-curl -v http://<pod-ip>:<container-port>
-ping <pod-ip>
-
-# Trace the route to the target pod
-traceroute <pod-ip>
-
-# Test connectivity to external endpoints
-curl -v https://example.com
-nslookup example.com
-```
-
-If pod-to-pod works but service access fails, the issue is in the service/endpoint configuration.
-If neither works, investigate network policies or CNI issues.
-
-### Step 4: Check network policies (including CiliumNetworkPolicy)
-
-Network policies can silently block traffic. On AKS clusters with Cilium, **both** standard `NetworkPolicy` and `CiliumNetworkPolicy` / `CiliumClusterwideNetworkPolicy` are enforced simultaneously.
+Network policies can silently block traffic. Check policies **before** running connectivity tests — if a deny policy is in place, the tests will fail and you'll waste time diagnosing the wrong thing. On AKS clusters with Cilium, **both** standard `NetworkPolicy` and `CiliumNetworkPolicy` / `CiliumClusterwideNetworkPolicy` are enforced simultaneously.
 
 ```bash
 # List standard Kubernetes network policies in the namespace
@@ -455,6 +423,38 @@ kubectl exec -n kube-system <cilium-agent-pod> -- cilium policy get
 ```
 
 Use `networkpolicy-viewer` or similar tools for visualizing policies across the cluster. For Cilium, use `cilium monitor` on the agent pod to observe real-time policy verdicts and drops.
+
+### Step 4: Test in-cluster connectivity
+
+Use a debug pod to test connectivity from within the cluster:
+
+```bash
+kubectl run netshoot --image=nicolaka/netshoot --rm -it -- bash
+```
+
+From inside the debug pod:
+
+```bash
+# Test service DNS resolution
+nslookup <service-name>.<namespace>.svc.cluster.local
+
+# Test connectivity to the service ClusterIP
+curl -v http://<service-name>.<namespace>.svc.cluster.local:<port>
+
+# Test direct pod-to-pod connectivity
+curl -v http://<pod-ip>:<container-port>
+ping <pod-ip>
+
+# Trace the route to the target pod
+traceroute <pod-ip>
+
+# Test connectivity to external endpoints
+curl -v https://example.com
+nslookup example.com
+```
+
+If pod-to-pod works but service access fails, the issue is in the service/endpoint configuration.
+If neither works, the network policy check in Step 3 should have revealed the cause — revisit those findings or investigate CNI issues.
 
 ### Step 5: Diagnose DNS issues
 

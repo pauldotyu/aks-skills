@@ -149,7 +149,7 @@ Always diagnose from **inside the cluster first** before checking Azure resource
 
 ### Service not reachable
 
-Follow this order: pod health → service/endpoints → in-cluster connectivity → network policies → Azure resources.
+Follow this order: pod health → service/endpoints → network policies → in-cluster connectivity → Azure resources.
 
 ```bash
 # 1. Confirm target pods are Running and Ready
@@ -168,21 +168,21 @@ kubectl get endpointslices -n <namespace> -l kubernetes.io/service-name=<service
 kubectl get service <service-name> -n <namespace> -o jsonpath='{.spec.selector}'
 kubectl get pods -n <namespace> --show-labels
 
-# 5. Test connectivity from within the cluster
+# 5. Check network policies BEFORE testing connectivity (silent drops waste time)
+kubectl get networkpolicies -n <namespace>
+kubectl describe networkpolicy <policy-name> -n <namespace>
+
+# 5b. If using Cilium dataplane, also check CiliumNetworkPolicies
+kubectl get ciliumnetworkpolicies -n <namespace>
+kubectl get ciliumclusterwidenetworkpolicies
+kubectl get ciliumendpoints -n <namespace>
+
+# 6. Test connectivity from within the cluster
 kubectl run debug --image=nicolaka/netshoot --rm -it -- bash
 # Then inside the pod:
 # curl -v http://<service-name>.<namespace>.svc.cluster.local
 # nslookup <service-name>.<namespace>.svc.cluster.local
 # curl -v http://<pod-ip>:<container-port>
-
-# 6. Check network policies that may block traffic (including Cilium policies)
-kubectl get networkpolicies -n <namespace>
-kubectl describe networkpolicy <policy-name> -n <namespace>
-
-# 6b. If using Cilium dataplane, also check CiliumNetworkPolicies
-kubectl get ciliumnetworkpolicies -n <namespace>
-kubectl get ciliumclusterwidenetworkpolicies
-kubectl get ciliumendpoints -n <namespace>
 
 # 7. Check kube-proxy is running (handles service routing)
 # Note: clusters with Cilium in kube-proxy replacement mode won't have kube-proxy
