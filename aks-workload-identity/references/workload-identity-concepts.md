@@ -2,10 +2,10 @@
 
 ## How It Works
 
-AKS workload identity uses the OIDC federation protocol:
+AKS workload identity uses the OIDC federation protocol to enable pods to authenticate to Azure services without secrets:
 
 1. The AKS cluster acts as a **token issuer** via its OIDC issuer endpoint.
-2. A Kubernetes **projected service account token** is mounted into the pod.
+2. A Kubernetes **projected service account token** is mounted into the pod by the mutating admission webhook.
 3. The pod presents this token to Microsoft Entra ID, which validates it against the cluster's OIDC discovery endpoint.
 4. Microsoft Entra ID exchanges the Kubernetes token for a **Microsoft Entra access token**.
 5. The workload uses the Microsoft Entra token to access Azure resources.
@@ -17,16 +17,27 @@ AKS workload identity uses the OIDC federation protocol:
 | `{IssuerURL}/.well-known/openid-configuration` | OIDC discovery document with issuer metadata                                       |
 | `{IssuerURL}/openid/v1/jwks`                   | Public signing keys used by Microsoft Entra ID to verify the service account token |
 
+## Identity Types
+
+Workload identity supports two Azure identity types:
+
+| Identity Type                            | Description                                                      | When to Use                                                   |
+| ---------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------- |
+| **Azure User-Assigned Managed Identity** | A standalone Azure resource with automatic credential management | Recommended for most scenarios; simpler lifecycle management  |
+| **Microsoft Entra ID App Registration**  | An application identity registered in Microsoft Entra ID         | When you need app-specific permissions or multi-tenant access |
+
+Both support **federated identity credentials** that bind a Kubernetes service account to the Azure identity via OIDC.
+
 ## Environment Variables Injected by the Webhook
 
 When a pod has the label `azure.workload.identity/use: "true"`, the mutating admission webhook injects these environment variables:
 
-| Variable                     | Source                                                                                                | Description                                                                                                       |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `AZURE_CLIENT_ID`            | Service account annotation `azure.workload.identity/client-id`                                        | Client ID of the managed identity or app registration                                                             |
-| `AZURE_TENANT_ID`            | Service account annotation `azure.workload.identity/tenant-id` or `azure-wi-webhook-config` ConfigMap | Microsoft Entra tenant ID                                                                                         |
-| `AZURE_FEDERATED_TOKEN_FILE` | Projected volume path                                                                                 | Path to the projected service account token file (typically `/var/run/secrets/azure/tokens/azure-identity-token`) |
-| `AZURE_AUTHORITY_HOST`       | `azure-wi-webhook-config` ConfigMap                                                                   | Microsoft Entra authority URL (e.g., `https://login.microsoftonline.com/`)                                        |
+| Variable                     | Source                                                                                                | Description                                                                                                                                                                                                                                                                                               |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AZURE_CLIENT_ID`            | Service account annotation `azure.workload.identity/client-id`                                        | Client ID of the managed identity or app registration                                                                                                                                                                                                                                                     |
+| `AZURE_TENANT_ID`            | Service account annotation `azure.workload.identity/tenant-id` or `azure-wi-webhook-config` ConfigMap | Microsoft Entra tenant ID                                                                                                                                                                                                                                                                                 |
+| `AZURE_FEDERATED_TOKEN_FILE` | Projected volume path                                                                                 | Path to the projected service account token file. The open-source webhook uses `/var/run/secrets/azure/tokens/azure-identity-token`; the AKS-managed webhook `v1.6.0-alpha.1`+ uses `/var/run/secrets/azure/wi/token/azure-identity-token`. Always reference this env var instead of hardcoding the path. |
+| `AZURE_AUTHORITY_HOST`       | `azure-wi-webhook-config` ConfigMap                                                                   | Microsoft Entra authority URL (e.g., `https://login.microsoftonline.com/`)                                                                                                                                                                                                                                |
 
 ## Service Account Annotations
 
@@ -59,7 +70,7 @@ When a pod has the label `azure.workload.identity/use: "true"`, the mutating adm
 | `subject`   | `system:serviceaccount:<namespace>:<service-account-name>` | Case-sensitive; must match the Kubernetes namespace and service account name |
 | `audiences` | `api://AzureADTokenExchange`                               | Default audience; do not change unless using a custom configuration          |
 
-### Limits
+### Federated Credential Limits
 
 - Maximum **20 federated identity credentials** per managed identity.
 - Federated credentials may take **a few seconds to propagate** after creation.
@@ -78,6 +89,8 @@ Use `DefaultAzureCredential` or `WorkloadIdentityCredential` from the Azure Iden
 | Node.js  | `@azure/identity`    | 3.2.0           |
 | Python   | `azure-identity`     | 1.13.0          |
 
+The SDK automatically reads `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_FEDERATED_TOKEN_FILE` environment variables injected by the webhook. No additional configuration is needed in application code when using `DefaultAzureCredential`.
+
 ## Identity Mapping Patterns
 
 Workload identity supports flexible mapping between Kubernetes service accounts and Microsoft Entra identities:
@@ -90,8 +103,9 @@ Workload identity supports flexible mapping between Kubernetes service accounts 
 
 ## External References
 
-- [Use Microsoft Entra Workload ID with AKS](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview)
-- [Deploy and configure workload identity on AKS](https://learn.microsoft.com/en-us/azure/aks/workload-identity-deploy-cluster)
-- [Migrate from pod-managed identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-migrate-from-pod-identity)
+- [Microsoft Entra Workload ID overview on AKS](https://learn.microsoft.com/azure/aks/workload-identity-overview)
+- [Deploy and configure workload identity on AKS](https://learn.microsoft.com/azure/aks/workload-identity-deploy-cluster)
+- [Secure access to Azure OpenAI from AKS](https://learn.microsoft.com/azure/aks/open-ai-secure-access-quickstart)
+- [Migrate from pod-managed identity](https://learn.microsoft.com/azure/aks/workload-identity-migrate-from-pod-identity)
 - [azure-workload-identity GitHub (troubleshooting)](https://azure.github.io/azure-workload-identity/docs/troubleshooting.html)
-- [Federated identity credential considerations](https://learn.microsoft.com/en-us/azure/active-directory/workload-identities/workload-identity-federation-considerations)
+- [Federated identity credential considerations](https://learn.microsoft.com/azure/active-directory/workload-identities/workload-identity-federation-considerations)

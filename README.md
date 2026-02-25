@@ -6,13 +6,13 @@ These skills give AI agents specialized knowledge and workflows for managing, tr
 
 ## Skills
 
-| Skill                                                                             | Description                                                                                                                                                                           |
-| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [aks-cluster-management](./aks-cluster-management/)                               | Create, configure, scale, and upgrade AKS clusters using the Azure CLI                                                                                                                |
-| [aks-monitoring](./aks-monitoring/)                                               | Set up and query AKS monitoring with Azure Monitor, Container Insights, Prometheus, and Grafana                                                                                       |
-| [aks-networking](./aks-networking/)                                               | Configure and troubleshoot AKS networking including CNI plugins, ingress, load balancers, and DNS                                                                                     |
-| [aks-troubleshooting](./aks-troubleshooting/)                                     | Diagnose and resolve common AKS issues including pod failures, node problems, and cluster health                                                                                      |
-| [aks-workload-identity-troubleshooting](./aks-workload-identity-troubleshooting/) | Troubleshoot workload identity configuration in AKS clusters, covering Azure User-Assigned Managed Identity, Microsoft Entra ID App Registration, and federated identity credentials. |
+| Skill                                               | Description                                                                                                                                                                                |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [aks-cluster-management](./aks-cluster-management/) | Create, configure, scale, and upgrade AKS clusters using the Azure CLI                                                                                                                     |
+| [aks-monitoring](./aks-monitoring/)                 | Set up and query AKS monitoring with Azure Monitor, Container Insights, Prometheus, and Grafana                                                                                            |
+| [aks-networking](./aks-networking/)                 | Configure and troubleshoot AKS networking including CNI plugins, ingress, load balancers, and DNS                                                                                          |
+| [aks-troubleshooting](./aks-troubleshooting/)       | Diagnose and resolve common AKS issues including pod failures, node problems, and cluster health                                                                                           |
+| [aks-workload-identity](./aks-workload-identity/)   | Configure and troubleshoot Microsoft Entra Workload ID on AKS clusters, covering OIDC federation, managed identities, app registrations, federated credentials, and service account setup. |
 
 ## Usage
 

@@ -19,7 +19,9 @@ These errors are returned by the Microsoft Entra ID token endpoint during the se
 A frequent cause of `AADSTS70021` is an issuer URL mismatch due to a trailing slash. AKS OIDC issuer URLs include a trailing `/`:
 
 ```
-https://oidc.prod-aks.azure.com/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/
+
+https://eastus.oic.prod-aks.azure.com/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/
+
 ```
 
 When creating federated identity credentials, always retrieve the issuer URL directly from the cluster to avoid mismatches:
@@ -31,9 +33,17 @@ az aks show --resource-group <resource-group> --name <cluster-name> \
 
 ## Webhook-Related Errors
 
-| Symptom                                               | Likely Cause                                                                   | Resolution                                                                                                                                                 |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Pod starts without `AZURE_*` environment variables    | Webhook not running or pod missing `azure.workload.identity/use: "true"` label | Check webhook pods: `kubectl get pods -n kube-system -l app=azure-wi-webhook-webhook-manager`. Add the required label to pod spec.                         |
-| Pods fail to start with admission webhook errors      | Webhook certificate expired or webhook is misconfigured                        | Restart the webhook deployment: `kubectl rollout restart deployment azure-wi-webhook-webhook-manager -n kube-system`                                       |
-| Token file not found at `$AZURE_FEDERATED_TOKEN_FILE` | Projected volume not mounted                                                   | Verify the pod spec includes the projected service account token volume. Check if the pod was created before the webhook was installed (recreate the pod). |
-| `context deadline exceeded` during token exchange     | Network policy or firewall blocking egress to `login.microsoftonline.com`      | Ensure pods can reach `login.microsoftonline.com:443`. Check network policies and NSG rules.                                                               |
+| Symptom                                               | Likely Cause                                                                                                                                                                                                                     | Resolution                                                                                                                                                                                              |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pod starts without `AZURE_*` environment variables    | Webhook not running or pod missing `azure.workload.identity/use: "true"` label                                                                                                                                                   | Check webhook pods: `kubectl get pods -n kube-system -l app=azure-wi-webhook-webhook-manager`. Add the required label to pod spec.                                                                      |
+| Pods fail to start with admission webhook errors      | Webhook certificate expired or webhook is misconfigured                                                                                                                                                                          | Restart the webhook deployment: `kubectl rollout restart deployment azure-wi-webhook-webhook-manager -n kube-system`                                                                                    |
+| Token file not found at `$AZURE_FEDERATED_TOKEN_FILE` | Projected volume not mounted                                                                                                                                                                                                     | Verify the pod spec includes the projected service account token volume. Check if the pod was created before the webhook was installed (recreate the pod).                                              |
+| `context deadline exceeded` during token exchange     | Network policy or firewall blocking egress to `login.microsoftonline.com`                                                                                                                                                        | Ensure pods can reach `login.microsoftonline.com:443`. Check network policies and NSG rules.                                                                                                            |
+| Federated token file path validation fails            | Tool or library hardcodes the token path but AKS-managed webhook `v1.6.0-alpha.1`+ mounts at `/var/run/secrets/azure/wi/token/azure-identity-token` instead of the original `/var/run/secrets/azure/tokens/azure-identity-token` | Use the `$AZURE_FEDERATED_TOKEN_FILE` environment variable instead of hardcoding the path. Verify the actual mount path with `kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.volumes}'`. |
+
+## RBAC Propagation Errors
+
+| Symptom                                          | Likely Cause                | Resolution                                                                                    |
+| ------------------------------------------------ | --------------------------- | --------------------------------------------------------------------------------------------- |
+| `AuthorizationFailed` or `403 Forbidden`         | Role assignment not applied | RBAC role assignments can take up to 10 minutes to propagate. Wait and retry.                 |
+| Identity has role but cannot access the resource | Wrong scope on assignment   | Verify the role is assigned at the correct scope (resource, resource group, or subscription). |
