@@ -1,6 +1,11 @@
 ---
 name: aks-workload-identity-troubleshooting
-description: Guide for troubleshooting workload identity configuration in Azure Kubernetes Service (AKS). Use this when asked to troubleshoot or diagnose workload identity issues in AKS clusters.
+description: Troubleshoot workload identity configuration in Azure Kubernetes Service (AKS). Use when pods fail to authenticate to Azure services, federated identity credentials are misconfigured, the workload identity webhook is not mutating pods, OIDC token exchange errors occur (AADSTS70021, AADSTS700016), or when diagnosing issues with Azure User-Assigned Managed Identity or Microsoft Entra ID App Registration federation.
+license: MIT
+metadata:
+  author: pauldotyu
+  version: "1.0"
+compatibility: Requires kubectl connected to the target cluster and az CLI with an authenticated Azure session
 ---
 
 # AKS Workload Identity Troubleshooting
@@ -11,6 +16,8 @@ Workload identity in AKS allows pods to authenticate to Azure services without s
 - **Microsoft Entra ID App Registration** – an application identity registered in Microsoft Entra ID (formerly Azure Active Directory).
 
 Both options support **federated identity credentials**, which allow a Kubernetes service account token to be exchanged for an Azure access token via the OpenID Connect (OIDC) protocol.
+
+See [references/workload-identity-concepts.md](references/workload-identity-concepts.md) for environment variables, annotations, labels, SDK versions, and federated credential field requirements. See [references/error-codes.md](references/error-codes.md) for detailed AADSTS error codes and webhook-related errors.
 
 ## Prerequisites
 
@@ -168,7 +175,7 @@ kubectl exec -it <pod-name> -n <namespace> -- /bin/sh
 # Inside the pod:
 cat $AZURE_FEDERATED_TOKEN_FILE
 curl -s -X POST "https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token" \
-  -d "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer" \
+  -d "grant_type=client_credentials" \
   -d "client_id=<client-id>" \
   -d "client_assertion=$(cat $AZURE_FEDERATED_TOKEN_FILE)" \
   -d "client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer" \
@@ -177,10 +184,10 @@ curl -s -X POST "https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token
 
 ## Common Misconfigurations
 
-| Issue | Likely Cause |
-|---|---|
-| `AADSTS70021` token exchange failure | Federated credential `issuer`, `subject`, or `audience` mismatch |
-| Pod not mutated (missing env vars) | Missing `azure.workload.identity/use: "true"` label on pod |
-| Service account token not projected | Webhook not running or pod created before webhook was installed |
-| Permission denied on Azure resource | Missing RBAC role assignment for the managed identity or service principal |
-| Client ID not found | `azure.workload.identity/client-id` annotation missing or incorrect on service account |
+| Issue                                | Likely Cause                                                                           |
+| ------------------------------------ | -------------------------------------------------------------------------------------- |
+| `AADSTS70021` token exchange failure | Federated credential `issuer`, `subject`, or `audience` mismatch                       |
+| Pod not mutated (missing env vars)   | Missing `azure.workload.identity/use: "true"` label on pod                             |
+| Service account token not projected  | Webhook not running or pod created before webhook was installed                        |
+| Permission denied on Azure resource  | Missing RBAC role assignment for the managed identity or service principal             |
+| Client ID not found                  | `azure.workload.identity/client-id` annotation missing or incorrect on service account |
