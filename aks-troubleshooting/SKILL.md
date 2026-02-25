@@ -26,8 +26,10 @@ kubectl get pods -A --field-selector='status.phase!=Running,status.phase!=Succee
 # Check recent events
 kubectl get events -A --sort-by='.lastTimestamp' | tail -30
 
-# Check cluster component health
+# Check cluster component health (note: componentstatuses is deprecated since K8s 1.19)
 kubectl get componentstatuses
+# Preferred: check control plane pods directly
+kubectl get pods -n kube-system
 ```
 
 ## Pod Troubleshooting
@@ -61,6 +63,7 @@ kubectl describe pod <pod-name> -n <namespace>
 ```
 
 Common causes and fixes:
+
 - **Exit code 1**: Application error — check app logs for stack traces
 - **Exit code 137 (OOMKilled)**: Increase memory limits or optimize the application
 - **Exit code 139**: Segmentation fault — application bug or incompatible dependencies
@@ -90,6 +93,7 @@ kubectl describe pod <pod-name> -n <namespace> | grep -A 5 "Failed"
 ```
 
 Common causes:
+
 - Image name or tag is incorrect
 - Private registry credentials missing — create or update the image pull secret
 - Registry is unreachable from the node
@@ -123,6 +127,7 @@ journalctl -u kubelet -n 100
 ```
 
 Common causes:
+
 - Disk pressure: clean up unused images/volumes
 - Memory pressure: reduce workload density
 - Network issues: check CNI plugin status
@@ -164,6 +169,7 @@ kubectl describe service <service-name> -n <namespace> | grep -A 5 "Events"
 ```
 
 Common causes:
+
 - Quota limit on public IPs in the region
 - AKS managed identity lacks network contributor role on the subnet
 

@@ -2,12 +2,12 @@
 
 ## Monitoring Solutions Comparison
 
-| Solution | Type | Best For |
-|----------|------|----------|
-| Azure Monitor Container Insights | Managed Azure service | Production clusters, Azure-native environments |
-| Managed Prometheus + Grafana | Managed Azure service | Teams familiar with Prometheus/Grafana |
-| Self-hosted kube-prometheus-stack | Open source (Helm) | Full control, custom dashboards |
-| Datadog / Dynatrace / New Relic | Third-party | Enterprises with existing APM investments |
+| Solution                          | Type                  | Best For                                       |
+| --------------------------------- | --------------------- | ---------------------------------------------- |
+| Azure Monitor Container Insights  | Managed Azure service | Production clusters, Azure-native environments |
+| Managed Prometheus + Grafana      | Managed Azure service | Teams familiar with Prometheus/Grafana         |
+| Self-hosted kube-prometheus-stack | Open source (Helm)    | Full control, custom dashboards                |
+| Datadog / Dynatrace / New Relic   | Third-party           | Enterprises with existing APM investments      |
 
 ## Azure Monitor Container Insights
 
@@ -19,15 +19,15 @@
 
 ### Key tables in Log Analytics
 
-| Table | Contents |
-|-------|----------|
-| `KubePodInventory` | Pod status, restarts, namespace, labels |
-| `KubeNodeInventory` | Node status, conditions, capacity |
-| `KubeEvents` | Kubernetes events (warnings, errors) |
-| `KubeServices` | Service details |
-| `ContainerLog` | Container stdout/stderr logs |
-| `InsightsMetrics` | Performance metrics (CPU, memory) |
-| `Perf` | Performance counters from nodes and containers |
+| Table               | Contents                                       |
+| ------------------- | ---------------------------------------------- |
+| `KubePodInventory`  | Pod status, restarts, namespace, labels        |
+| `KubeNodeInventory` | Node status, conditions, capacity              |
+| `KubeEvents`        | Kubernetes events (warnings, errors)           |
+| `KubeServices`      | Service details                                |
+| `ContainerLog`      | Container stdout/stderr logs                   |
+| `InsightsMetrics`   | Performance metrics (CPU, memory)              |
+| `Perf`              | Performance counters from nodes and containers |
 
 ## Managed Prometheus with Azure Monitor Workspace
 
@@ -40,6 +40,7 @@
 ### Enabling managed Prometheus
 
 Requirements:
+
 - Azure Monitor workspace (different from Log Analytics workspace)
 - AKS cluster with managed identity
 - Optional: Azure Managed Grafana for visualization
@@ -48,22 +49,22 @@ Requirements:
 
 ### Cluster health
 
-| Metric | Alert Threshold |
-|--------|----------------|
-| Node CPU usage | > 80% sustained |
-| Node memory usage | > 85% sustained |
-| Node disk usage | > 80% |
-| Pod restart count | > 5 in 1 hour |
-| Pending pods | > 0 for > 5 minutes |
-| NotReady nodes | > 0 |
+| Metric            | Alert Threshold     |
+| ----------------- | ------------------- |
+| Node CPU usage    | > 80% sustained     |
+| Node memory usage | > 85% sustained     |
+| Node disk usage   | > 80%               |
+| Pod restart count | > 5 in 1 hour       |
+| Pending pods      | > 0 for > 5 minutes |
+| NotReady nodes    | > 0                 |
 
 ### Application performance
 
-| Metric | Alert Threshold |
-|--------|----------------|
-| HTTP error rate | > 1% |
+| Metric              | Alert Threshold                    |
+| ------------------- | ---------------------------------- |
+| HTTP error rate     | > 1%                               |
 | P99 request latency | > 2 seconds (application-specific) |
-| Request queue depth | > 100 (application-specific) |
+| Request queue depth | > 100 (application-specific)       |
 
 ## Log Retention
 

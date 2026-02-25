@@ -155,28 +155,59 @@ az aks update \
 
 ### Alert when pods are in CrashLoopBackOff
 
-Via Azure Monitor:
+Using a Prometheus alert rule (requires managed Prometheus):
+
+```yaml
+apiVersion: alerts.monitor.azure.com/v1
+kind: PrometheusRuleGroup
+metadata:
+  name: crashloopbackoff-alert
+spec:
+  scopes:
+    - /subscriptions/<sub-id>/resourceGroups/<rg>/providers/microsoft.monitor/accounts/<azure-monitor-workspace>
+  clusterName: <cluster-name>
+  rules:
+    - alert: PodCrashLoopBackOff
+      expression: kube_pod_container_status_waiting_reason{reason="CrashLoopBackOff"} > 0
+      for: 5m
+      severity: 3
+      annotations:
+        description: "Pod {{ $labels.namespace }}/{{ $labels.pod }} is in CrashLoopBackOff"
+```
+
+Alternatively, use a Container Insights log-based alert via scheduled query:
 
 ```bash
-az monitor metrics alert create \
+az monitor scheduled-query create \
   --resource-group <resource-group> \
   --name "CrashLoopBackOff Alert" \
-  --scopes "/subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.ContainerService/managedClusters/<cluster-name>" \
-  --condition "count kube_pod_container_status_waiting_reason{reason='CrashLoopBackOff'} > 0" \
-  --description "Pods are in CrashLoopBackOff state"
+  --scopes "/subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.OperationalInsights/workspaces/<workspace-name>" \
+  --condition "count 'KubePodInventory | where ContainerStatusReason == \"CrashLoopBackOff\"' > 0" \
+  --evaluation-frequency 5m \
+  --window-size 10m \
+  --severity 2
 ```
 
 ### Alert on node CPU > 80%
 
-```bash
-az monitor metrics alert create \
-  --resource-group <resource-group> \
-  --name "High Node CPU" \
-  --scopes "/subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.ContainerService/managedClusters/<cluster-name>" \
-  --condition "avg node_cpu_usage_percentage > 80" \
-  --window-size 5m \
-  --evaluation-frequency 1m \
-  --severity 2
+Using a Prometheus alert rule (requires managed Prometheus):
+
+```yaml
+apiVersion: alerts.monitor.azure.com/v1
+kind: PrometheusRuleGroup
+metadata:
+  name: node-cpu-alert
+spec:
+  scopes:
+    - /subscriptions/<sub-id>/resourceGroups/<rg>/providers/microsoft.monitor/accounts/<azure-monitor-workspace>
+  clusterName: <cluster-name>
+  rules:
+    - alert: HighNodeCPU
+      expression: (1 - avg by (instance)(rate(node_cpu_seconds_total{mode="idle"}[5m]))) * 100 > 80
+      for: 5m
+      severity: 2
+      annotations:
+        description: "Node {{ $labels.instance }} CPU usage is above 80%"
 ```
 
 ## kubectl-Based Monitoring

@@ -116,9 +116,10 @@ metadata:
   name: my-service
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-resource-group: "<node-resource-group>"
+    # Preferred: use this annotation instead of spec.loadBalancerIP (deprecated in K8s 1.24)
+    service.beta.kubernetes.io/azure-load-balancer-ipv4: "<static-ip-address>"
 spec:
   type: LoadBalancer
-  loadBalancerIP: <static-ip-address>
   selector:
     app: my-app
   ports:
