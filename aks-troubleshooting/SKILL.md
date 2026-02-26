@@ -1,11 +1,13 @@
 ---
 name: aks-troubleshooting
-description: Diagnose and resolve Azure Kubernetes Service (AKS) pod, node, and control plane issues. Use when pods are stuck in Pending/CrashLoopBackOff/OOMKilled/ImagePullBackOff states, nodes are NotReady, the cluster API is unreachable, or when investigating resource exhaustion and quota issues. For networking and connectivity issues (services, DNS, ingress, network policies, load balancers), use the [aks-networking](../aks-networking/SKILL.md) skill instead.
+description: Diagnose and resolve Azure Kubernetes Service (AKS) pod, node, and control plane issues. Use when pods are stuck in Pending, CrashLoopBackOff, OOMKilled, ImagePullBackOff, or Error states, nodes show NotReady or SchedulingDisabled, the API server is unreachable, containers crash with non-zero exit codes, resource quotas are exceeded, or persistent volume claims fail to bind.
 ---
 
 # AKS Troubleshooting
 
-This skill covers pod, node, resource, and control plane troubleshooting for Azure Kubernetes Service clusters. For networking and connectivity issues, see the **[aks-networking](../aks-networking/SKILL.md)** skill.
+This skill covers pod, node, resource, and control plane troubleshooting for Azure Kubernetes Service clusters.
+
+> **Related skills:** For networking and connectivity issues, see [aks-networking](../aks-networking/SKILL.md). For cluster provisioning or upgrade failures, see [aks-cluster-management](../aks-cluster-management/SKILL.md). For workload identity token errors, see [aks-workload-identity](../aks-workload-identity/SKILL.md). For monitoring and alerting, see [aks-monitoring](../aks-monitoring/SKILL.md).
 
 ## Quick Diagnostics
 

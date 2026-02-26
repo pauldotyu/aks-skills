@@ -1,11 +1,13 @@
 ---
 name: aks-monitoring
-description: Set up and query monitoring for Azure Kubernetes Service (AKS) clusters. Use when enabling Azure Monitor Container Insights, configuring Prometheus and Grafana, querying cluster metrics and logs, setting up alerts for resource usage or pod failures, or investigating performance issues using monitoring data.
+description: Set up and query monitoring for Azure Kubernetes Service (AKS) clusters. Use when enabling Azure Monitor Container Insights, configuring managed Prometheus or Grafana, writing KQL or PromQL queries, querying cluster metrics and logs, setting up alerts for CPU, memory, pod restarts, or CrashLoopBackOff, checking resource usage with kubectl top, or investigating cluster performance issues.
 ---
 
 # AKS Monitoring
 
-This skill covers setting up and using monitoring for AKS clusters using Azure Monitor Container Insights, Prometheus, and Grafana.
+This skill covers setting up and using monitoring for AKS clusters using Azure Monitor Container Insights, Prometheus, and Grafana. See [references/monitoring-options.md](references/monitoring-options.md) for a comparison of monitoring approaches.
+
+> **Related skills:** For diagnosing pod or node failures, see [aks-troubleshooting](../aks-troubleshooting/SKILL.md). For cluster provisioning and upgrades, see [aks-cluster-management](../aks-cluster-management/SKILL.md). For network diagnostics, see [aks-networking](../aks-networking/SKILL.md).
 
 ## Azure Monitor Container Insights
 

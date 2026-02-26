@@ -1,6 +1,6 @@
 ---
 name: aks-workload-identity
-description: Configure and troubleshoot Microsoft Entra Workload ID on Azure Kubernetes Service (AKS). Use when enabling OIDC issuer and workload identity on a cluster, creating user-assigned managed identities or Microsoft Entra ID app registrations with federated credentials, setting up Kubernetes service accounts for workload identity, deploying pods that authenticate to Azure services without secrets, diagnosing AADSTS token exchange errors (AADSTS70021, AADSTS700016, AADSTS700024), or resolving webhook mutation issues.
+description: Configure and troubleshoot Microsoft Entra Workload ID on Azure Kubernetes Service (AKS). Use when enabling OIDC issuer and workload identity on a cluster, creating user-assigned managed identities or app registrations with federated credentials, setting up Kubernetes service accounts for passwordless Azure authentication, deploying pods that use DefaultAzureCredential or WorkloadIdentityCredential, or diagnosing AADSTS token exchange errors (AADSTS70021, AADSTS700016, AADSTS700024) and webhook mutation issues.
 ---
 
 # AKS Workload Identity
@@ -8,6 +8,8 @@ description: Configure and troubleshoot Microsoft Entra Workload ID on Azure Kub
 Microsoft Entra Workload ID allows pods running on AKS to authenticate to Azure services without storing secrets or API keys. It uses the OpenID Connect (OIDC) federation protocol to exchange a Kubernetes service account token for a Microsoft Entra access token.
 
 This skill covers end-to-end **configuration** and **troubleshooting** of workload identity on AKS.
+
+> **Related skills:** For general pod/node diagnostics, see [aks-troubleshooting](../aks-troubleshooting/SKILL.md). For cluster provisioning and upgrades, see [aks-cluster-management](../aks-cluster-management/SKILL.md). For network connectivity issues, see [aks-networking](../aks-networking/SKILL.md).
 
 See [./references/workload-identity-concepts.md](./references/workload-identity-concepts.md) for environment variables, annotations, labels, SDK versions, and federated credential field requirements. See [./references/error-codes.md](./references/error-codes.md) for detailed AADSTS error codes and webhook-related errors.
 

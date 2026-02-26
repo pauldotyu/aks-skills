@@ -1,11 +1,13 @@
 ---
 name: aks-cluster-management
-description: Create, configure, scale, and upgrade Azure Kubernetes Service (AKS) clusters. Use when the user needs to provision a new AKS cluster, change cluster configuration, scale node pools, upgrade Kubernetes versions, manage cluster credentials, or perform lifecycle operations on AKS clusters.
+description: Create, configure, scale, upgrade, stop, start, and delete Azure Kubernetes Service (AKS) clusters using Azure CLI. Use when provisioning new AKS clusters (az aks create), scaling or adding node pools, enabling cluster autoscaler, upgrading Kubernetes versions, rotating credentials or certificates, creating private clusters, managing spot node pools, or performing any cluster lifecycle operation.
 ---
 
 # AKS Cluster Management
 
 This skill covers the full lifecycle of Azure Kubernetes Service clusters: provisioning, configuration, scaling, upgrading, and deletion.
+
+> **Related skills:** For network configuration (CNI, ingress, load balancers), see [aks-networking](../aks-networking/SKILL.md). For monitoring setup, see [aks-monitoring](../aks-monitoring/SKILL.md). For pod/node diagnostics, see [aks-troubleshooting](../aks-troubleshooting/SKILL.md). For workload identity, see [aks-workload-identity](../aks-workload-identity/SKILL.md).
 
 ## Prerequisites
 
