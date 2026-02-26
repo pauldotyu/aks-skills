@@ -1,11 +1,6 @@
 ---
 name: aks-networking
 description: Configure and troubleshoot Azure Kubernetes Service (AKS) networking. Use when setting up or modifying CNI plugins (Azure CNI, kubenet, Azure CNI Overlay), configuring ingress controllers (NGINX, Application Gateway Ingress Controller), setting up internal or external load balancers, managing network policies, configuring DNS, or diagnosing connectivity issues between pods, services, or external endpoints.
-license: MIT
-metadata:
-  author: pauldotyu
-  version: "1.0"
-compatibility: Requires kubectl connected to the target cluster and az CLI with an authenticated Azure session
 ---
 
 # AKS Networking
@@ -545,7 +540,7 @@ az aks kollect \
 
 ## References
 
-- [AKS networking concepts](references/networking-concepts.md)
+- [AKS networking concepts](./references/networking-concepts.md)
 - [Azure CNI documentation](https://learn.microsoft.com/en-us/azure/aks/configure-azure-cni)
 - [Azure network policies](https://learn.microsoft.com/en-us/azure/aks/use-network-policies)
 - [AKS ingress documentation](https://learn.microsoft.com/en-us/azure/aks/ingress-basic)

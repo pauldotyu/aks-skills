@@ -1,11 +1,6 @@
 ---
 name: aks-workload-identity
 description: Configure and troubleshoot Microsoft Entra Workload ID on Azure Kubernetes Service (AKS). Use when enabling OIDC issuer and workload identity on a cluster, creating user-assigned managed identities or Microsoft Entra ID app registrations with federated credentials, setting up Kubernetes service accounts for workload identity, deploying pods that authenticate to Azure services without secrets, diagnosing AADSTS token exchange errors (AADSTS70021, AADSTS700016, AADSTS700024), or resolving webhook mutation issues.
-license: MIT
-metadata:
-  author: pauldotyu
-  version: "2.0"
-compatibility: Requires kubectl connected to the target cluster and az CLI (2.47.0+) with an authenticated Azure session
 ---
 
 # AKS Workload Identity
@@ -14,7 +9,7 @@ Microsoft Entra Workload ID allows pods running on AKS to authenticate to Azure 
 
 This skill covers end-to-end **configuration** and **troubleshooting** of workload identity on AKS.
 
-See [references/workload-identity-concepts.md](references/workload-identity-concepts.md) for environment variables, annotations, labels, SDK versions, and federated credential field requirements. See [references/error-codes.md](references/error-codes.md) for detailed AADSTS error codes and webhook-related errors.
+See [./references/workload-identity-concepts.md](./references/workload-identity-concepts.md) for environment variables, annotations, labels, SDK versions, and federated credential field requirements. See [./references/error-codes.md](./references/error-codes.md) for detailed AADSTS error codes and webhook-related errors.
 
 ## Prerequisites
 
@@ -237,7 +232,7 @@ const { DefaultAzureCredential } = require("@azure/identity");
 const credential = new DefaultAzureCredential();
 ```
 
-See [references/workload-identity-concepts.md](references/workload-identity-concepts.md) for minimum SDK versions per language.
+See [./references/workload-identity-concepts.md](./references/workload-identity-concepts.md) for minimum SDK versions per language.
 
 ## Troubleshooting
 
@@ -358,7 +353,7 @@ Common error patterns:
 | `AADSTS70011`   | Invalid scope                         | Verify the resource URI in the token request                        |
 | `AADSTS7000215` | Invalid client assertion              | Verify projected token volume is mounted; restart pod               |
 
-See [references/error-codes.md](references/error-codes.md) for the full error reference.
+See [./references/error-codes.md](./references/error-codes.md) for the full error reference.
 
 ### 9. Validate Token Exchange Manually
 

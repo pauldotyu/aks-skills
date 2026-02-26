@@ -1,11 +1,6 @@
 ---
 name: aks-monitoring
 description: Set up and query monitoring for Azure Kubernetes Service (AKS) clusters. Use when enabling Azure Monitor Container Insights, configuring Prometheus and Grafana, querying cluster metrics and logs, setting up alerts for resource usage or pod failures, or investigating performance issues using monitoring data.
-license: MIT
-metadata:
-  author: pauldotyu
-  version: "1.0"
-compatibility: Requires kubectl connected to the target cluster, az CLI with an authenticated Azure session, and optionally Helm for Prometheus/Grafana deployment
 ---
 
 # AKS Monitoring
@@ -237,7 +232,7 @@ kubectl get events -n <namespace> --sort-by='.lastTimestamp' -w
 
 ## References
 
-- [Monitoring options](references/monitoring-options.md)
+- [Monitoring options](./references/monitoring-options.md)
 - [Azure Monitor Container Insights](https://learn.microsoft.com/en-us/azure/aks/monitor-aks)
 - [AKS managed Prometheus](https://learn.microsoft.com/en-us/azure/azure-monitor/containers/prometheus-metrics-enable)
 - [Grafana integration with AKS](https://learn.microsoft.com/en-us/azure/managed-grafana/quickstart-managed-grafana-portal)

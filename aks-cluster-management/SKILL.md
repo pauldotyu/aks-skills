@@ -1,11 +1,6 @@
 ---
 name: aks-cluster-management
 description: Create, configure, scale, and upgrade Azure Kubernetes Service (AKS) clusters. Use when the user needs to provision a new AKS cluster, change cluster configuration, scale node pools, upgrade Kubernetes versions, manage cluster credentials, or perform lifecycle operations on AKS clusters.
-license: MIT
-metadata:
-  author: pauldotyu
-  version: "1.0"
-compatibility: Requires Azure CLI (az) with the aks extension installed and an authenticated Azure session
 ---
 
 # AKS Cluster Management
@@ -80,7 +75,7 @@ az aks create \
   --generate-ssh-keys
 ```
 
-See [references/cluster-create-options.md](references/cluster-create-options.md) for all available options.
+See [./references/cluster-create-options.md](./references/cluster-create-options.md) for all available options.
 
 ### Common creation errors
 
@@ -326,12 +321,12 @@ For detailed troubleshooting guidance beyond the error tables above, see these r
 - **[AKS Troubleshooting](../aks-troubleshooting/SKILL.md)** — systematic diagnostics for pods, nodes, services, networking, and control plane issues
 - **[AKS Troubleshooting Error Codes](../aks-troubleshooting/references/error-codes.md)** — comprehensive error code reference (pod exit codes, Kubernetes events, AKS provisioning errors, API server HTTP codes)
 - **[AKS Networking](../aks-networking/SKILL.md)** — network plugin configuration, load balancers, ingress, network policies, and DNS troubleshooting
-- **[AKS Workload Identity Troubleshooting](../aks-workload-identity-troubleshooting/SKILL.md)** — OIDC federation issues, AADSTS errors, and service account misconfigurations
+- **[AKS Workload Identity](../aks-workload-identity/SKILL.md)** — OIDC federation issues, AADSTS errors, and service account misconfigurations
 - **[Microsoft AKS Troubleshooting Docs](https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/welcome-azure-kubernetes)** — official troubleshooting documentation covering create, upgrade, delete, scale, and connectivity issues
 
 ## References
 
-- [Cluster create options](references/cluster-create-options.md)
+- [Cluster create options](./references/cluster-create-options.md)
 - [Azure AKS documentation](https://learn.microsoft.com/en-us/azure/aks/)
 - [AKS best practices](https://learn.microsoft.com/en-us/azure/aks/best-practices)
 - [AKS troubleshooting documentation](https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/welcome-azure-kubernetes)
