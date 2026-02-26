@@ -258,6 +258,14 @@ az aks show \
   --output tsv
 ```
 
+For a comprehensive health check (provisioning state, Kubernetes version, node pools, and available upgrades), run the bundled executable script:
+
+```bash
+./scripts/check-cluster-health.sh <resource-group> <cluster-name>
+```
+
+See [./scripts/check-cluster-health.sh](./scripts/check-cluster-health.sh) for the full script.
+
 ## Common Patterns
 
 ### Enable workload identity
@@ -327,6 +335,7 @@ For detailed troubleshooting guidance beyond the error tables above, see these r
 ## References
 
 - [Cluster create options](./references/cluster-create-options.md)
+- [Cluster health check script](./scripts/check-cluster-health.sh) — executable script that reports provisioning state, Kubernetes version, node pool status, and available upgrades
 - [Azure AKS documentation](https://learn.microsoft.com/en-us/azure/aks/)
 - [AKS best practices](https://learn.microsoft.com/en-us/azure/aks/best-practices)
 - [AKS troubleshooting documentation](https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/welcome-azure-kubernetes)
